@@ -25,7 +25,7 @@
     width: 20px;
     height: 20px;
     background-color: white;
-    margin: 1px;
+    border: 2px black;
 }
 
 .alive {
