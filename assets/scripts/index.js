@@ -1,39 +1,41 @@
 function newBoard (width = 5, height = 5) {
-    this.x = width;
-    this.y = height;
+    this.width = width;
+    this.height = height;
     let generatedBoard = [];
-    for (let h = 0; h < height; h++) {
+    for (let h = 0; h < this.height; h++) {
         generatedBoard[h] = [];
-        for (let w = 0; w < width; w++) {
+        for (let w = 0; w < this.width; w++) {
             generatedBoard[h][w] = false;
         }
     }
     return generatedBoard;
 }
-
-function generateBoardOnPage(boolBoard){
-    const htmlBoard = document.createElement('div');
-    htmlBoard.classList.add('htmlBoard');
+generateCell = (isAlive) => {
     const cell = document.createElement('div');
     cell.classList.add('cell');
-    const row = document.createElement('div');
-    row.classList.add(`row`);
-    for (let h = 0; h < boolBoard.length + 1; h++) {
-        // console.log(`Row: ${h}\n`);
-        // row.classList.add(`row-${h}`);
-        for (let w = 0; w < boolBoard[0].length; w++) {
-
-            if (boolBoard[h][w] === false) {
-                row.appendChild(cell);
-            } else {
-                cell.classList.add('alive');
-                row.appendChild(cell);
-                cell.classList.remove('alive')
-            }
-            // console.log(`Cell: ${w}`);
-        }
+    if (isAlive) {
+        return cell;
+    } else {
+        cell.classList.add('alive');
+        return cell;
     }
 }
 
+renderBoard = boolBoard => {
+    const htmlBoard = document.createElement('div');
+    htmlBoard.classList.add('htmlBoard');
+
+    for (let h = 0; h < boolBoard.length; h++) {
+        let row = document.createElement('div');
+        row.classList.add(`row`);
+
+        for (let w = 0; w < boolBoard[0].length; w++) {
+            row.appendChild(generateCell(boolBoard[h[w]]));
+        }
+        htmlBoard.appendChild(row);
+    }
+    return htmlBoard;
+}
+
 let board = newBoard();
-generateBoardOnPage(board);
+renderBoard(board);
