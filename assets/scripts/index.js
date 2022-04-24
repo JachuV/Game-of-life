@@ -10,19 +10,26 @@ function newBoard (width = 5, height = 5) {
     }
     return generatedBoard;
 }
-generateCell = (isAlive) => {
+cell = document.querySelector('.cell');
+function changeCell() {
+    cell.addEventListener('click', () => {
+        console.log()
+    })
+}
+
+generateCell = (isAlive, width, height) => {
     const cell = document.createElement('div');
-    cell.classList.add('cell');
+    cell.classList.add('cell', `width:${width}`, `height:${height}`);
     if (isAlive) {
-        return cell;
-    } else {
         cell.classList.add('alive');
-        return cell;
     }
+    return cell;
+
 }
 
 renderBoard = boolBoard => {
     const htmlBoard = document.createElement('div');
+    const boardWrapper = document.querySelector('#table');
     htmlBoard.classList.add('htmlBoard');
 
     for (let h = 0; h < boolBoard.length; h++) {
@@ -30,12 +37,16 @@ renderBoard = boolBoard => {
         row.classList.add(`row`);
 
         for (let w = 0; w < boolBoard[0].length; w++) {
-            row.appendChild(generateCell(boolBoard[h[w]]));
+            row.appendChild(generateCell(boolBoard[h][w], w, h));
         }
         htmlBoard.appendChild(row);
     }
-    return htmlBoard;
+    console.log(htmlBoard)
+    // return htmlBoard;
+    return boardWrapper.appendChild(htmlBoard);
 }
 
-let board = newBoard();
+
+let board = newBoard(40, 20);
+board[2][2]=true;
 renderBoard(board);
