@@ -1,8 +1,9 @@
+import {changeValue} from "./index.js"
 export class GameController {
     constructor(width = 5, height = 5) {
         this.width = width;
         this.height = height;
-        this.board = this.newBoard;
+        this.board = () => this.newBoard();
         this.maxHeight = this.width - 1;
         this.maxWidth = this.height - 1;
     }
@@ -57,9 +58,19 @@ export class GameController {
         return newBoard;
     }
 
+    static changeOnClick(width, height) {
+        let cell = document.querySelector(`.W-${width}H-${height}`);
+        cell.addEventListener('click', () => {
+            board[width][height]=changeValue(cell.classList);
+            return board[width][height];
+        });
+    }
+
     async renderGame(time, board) {
         await this.timeout(300);
     }
 
     timeout = async time => await new Promise(resolve => setTimeout(() => resolve(), time));
+
+
 }
