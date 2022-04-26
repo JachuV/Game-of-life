@@ -10,32 +10,32 @@ export function changeValue(classList) {
     }
 }
 
-function changeOnClick(width, height, board) {
-    let cell = document.querySelector(`.W-${width}H-${height}`);
+function changeOnClick(height = 0, width = 0, board) {
+    let cell = document.querySelector(`.H-${height}W-${width}`);
     cell.addEventListener('click', () => {
-        board[width][height]=changeValue(cell.classList);
-        return board[width][height];
+        board[height][width]=changeValue(cell.classList);
+        return board[height][width];
     });
 }
 
-function addEventListeners(board) {
+export function addEventListeners(board = []) {
     for (let h = 0; h < board.length; h++) {
-        for (let w = 0; w < board[0].length; w++) {
-            return changeOnClick(w, h, board);
+        for (let w = 0; w < board[0].length; w+=1)  {
+            changeOnClick(h, w, board);
         }
     }
 }
 
-const generateCell = (isAlive, width, height) => {
+const generateCell = (isAlive = false, height, width) => {
     const cell = document.createElement('div');
-    cell.classList.add('cell', `W-${width}H-${height}`);
+    cell.classList.add('cell', `H-${height}W-${width}`);
     if (isAlive) {
         cell.classList.add('alive');
     }
     return cell;
 }
 
-const renderBoard = board => {
+export const renderBoard = board => {
     const htmlBoard = document.createElement('div');
     const boardWrapper = document.querySelector('#table');
     boardWrapper.innerHTML = ``;
@@ -44,25 +44,23 @@ const renderBoard = board => {
     for (let h = 0; h < board.length; h++) {
         let row = document.createElement('div');
         row.classList.add(`row`);
-
         for (let w = 0; w < board[0].length; w++) {
-            row.appendChild(generateCell(board[h][w], w, h));
+            row.appendChild(generateCell(board[h][w], h, w));
         }
         htmlBoard.appendChild(row);
     }
     return boardWrapper.appendChild(htmlBoard);
 }
-let board = new GameController(5,5);
-function gameInit() {
-    let newBoard = new GameController(5,5);
-    newBoard.board[1][1] = true;
-    newBoard.board[1][2] = true;
-    newBoard.board[1][3] = true;
-    renderBoard(newBoard.board);
-    addEventListeners(newBoard.board);
-    board.changeStatus(newBoard.board);
 
-    // console.log(newBoard);
+async function gameInit() {
+    let gameBoard = new GameController(5,10);
+    gameBoard.newBoard();
+    gameBoard.board[1][1] = true;
+    gameBoard.board[1][2] = true;
+    gameBoard.board[1][3] = true;
+    // gameBoard.board[0][4] = true;
+    await gameBoard.renderGame(10000);
 }
 
-gameInit();
+
+await gameInit();

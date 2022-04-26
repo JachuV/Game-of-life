@@ -1,76 +1,103 @@
-import {changeValue} from "./index.js"
+import {renderBoard, addEventListeners} from "./index.js";
+
 export class GameController {
-    constructor(width = 5, height = 5) {
+    constructor(height = 5, width = 5) {
         this.width = width;
         this.height = height;
-        this.board = () => this.newBoard();
+        this.board = [];
+        this.copyBoard = [];
         this.maxHeight = this.width - 1;
         this.maxWidth = this.height - 1;
     }
 
     newBoard = () => {
-        let generatedBoard = [];
-        for (let h = 0; h < this.height; h++) {
-            generatedBoard[h] = [];
-            for (let w = 0; w < this.width; w++) {
-                generatedBoard[h][w] = false;
+        for (let height = 0; height < this.height; height++) {
+            this.board[height] = [];
+            for (let width = 0; width < this.width; width++) {
+                this.board[height][width] = false;
             }
         }
-        return generatedBoard;
+        this.copyTheBoard();
     };
 
-    checkNeighbor(width, height) {
+    copyTheBoard = () => {
+        this.copyBoard = this.board;
+    }
+
+    restoreBoard = () => {
+        this.board = this.copyBoard;
+    }
+
+    checkNeighborhood = (height, width) => {
         let count = 0;
-        let value = this.board[width][height];
-        count += this.addAliveNeighbor(width - 1, height - 1);
-        count += this.addAliveNeighbor(width - 1, height);
-        count += this.addAliveNeighbor(width - 1, height + 1);
-        count += this.addAliveNeighbor(width, height - 1);
-        count += this.addAliveNeighbor(width, height + 1);
-        count += this.addAliveNeighbor(width + 1, height - 1);
-        count += this.addAliveNeighbor(width + 1, height);
-        count += this.addAliveNeighbor(width + 1, height + 1);
-        if (value === true) {
-            return (2 <= count && count <= 3);
+        for(let h = -1; h <= 1; h++ ) {
+            for (let w = -1; w <= 1; w++) {
+                if (h+height < 0 || h+height > this.maxHeight || w + width < 0 || w + width > this.maxWidth) {
+                    count += 0;
+                } else {
+                    count += this.addNeighbor(h, w);
+                }
+
+            }
+        }
+
+        if (this.board[height][width]) {
+            this.copyBoard[height][width] = (1 < count && count < 4);
         } else {
-            return (count === 3);
+            this.copyBoard[height][width] = (count === 3);
         }
     }
 
-    addAliveNeighbor(w, h) {
+    addNeighbor = (h, w) => {
+        let alive;
         try {
-            if (this.board[w][h]) {
-                return 1;
+            if (this.board[h][w]) {
+                alive = 1;
+            } else {
+                alive = 0;
             }
-            return 0;
         } catch {
-            return 0;
+            alive = 0;
         }
+        return alive;
     }
 
-    changeStatus() {
-        let newBoard = this.board;
-        for (let width = 0; width < this.maxWidth; width++) {
-            for (let height = 0; height < this.maxHeight; height++) {
-                newBoard[width][height] = this.checkNeighbor(width, height);
+    changeStatus = () => {
+
+        for (let height = 0; height < this.maxWidth; height+=1) {
+            for (let width = 0; width < this.maxHeight; width+=1) {
+                this.checkNeighborhood(height, width);
             }
         }
-        return newBoard;
+        this.restoreBoard();
     }
 
-    static changeOnClick(width, height) {
-        let cell = document.querySelector(`.W-${width}H-${height}`);
-        cell.addEventListener('click', () => {
-            board[width][height]=changeValue(cell.classList);
-            return board[width][height];
-        });
-    }
+    // static changeOnClick(width, height) {
+    //     let cell = document.querySelector(`.W-${width}H-${height}`);
+    //     cell.addEventListener('click', () => {
+    //         this.board[width][height]=changeValue(cell.classList);
+    //         return board[width][height];
+    //     });
+    // }
 
-    async renderGame(time, board) {
-        await this.timeout(300);
+    // renderGame(time) {
+    async renderGame(time) {
+        let renderCounter=0
+        do{
+            renderBoard(this.board);
+            // console.log(this.addNeighbor(1,2));
+
+            addEventListeners(this.board);
+            // console.log('copyBoard before', this.copyBoard);
+            // console.log('board before', this.board);
+            this.changeStatus();
+            // console.log('copyBoard after', this.copyBoard);
+            // console.log('board after', this.board);
+            renderCounter += 1;
+            await this.timeout(time);
+        } while (renderCounter !== 3)
+
     }
 
     timeout = async time => await new Promise(resolve => setTimeout(() => resolve(), time));
-
-
 }
