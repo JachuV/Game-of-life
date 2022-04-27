@@ -53,13 +53,16 @@ export const renderBoard = board => {
 }
 
 async function gameInit() {
-    let gameBoard = new GameController(5,10);
+    let gameBoard = new GameController(20,20);
     gameBoard.newBoard();
-    gameBoard.board[1][1] = true;
-    gameBoard.board[1][2] = true;
-    gameBoard.board[1][3] = true;
-    // gameBoard.board[0][4] = true;
-    await gameBoard.renderGame(10000);
+
+    //glider:
+    gameBoard.board[5][5] = true;
+    gameBoard.board[5][6] = true;
+    gameBoard.board[5][7] = true;
+    gameBoard.board[6][5] = true;
+    gameBoard.board[7][6] = true;
+    await gameBoard.renderGame(1000);
 }
 
 
